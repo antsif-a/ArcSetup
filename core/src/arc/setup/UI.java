@@ -14,12 +14,13 @@ import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.scene.Scene;
-import arc.scene.ui.Label.LabelStyle;
 import arc.setup.DependencyBank.ProjectDependency;
 import arc.setup.DependencyBank.ProjectType;
 import arc.util.*;
 
 public class UI implements ApplicationListener{
+    String homeDir = Core.files.absolute(Core.files.getExternalStoragePath()).toString();
+
     String[] templates = {"default", "gamejam", "simple"};
 
     Graphics graphics = Core.graphics;
@@ -27,23 +28,26 @@ public class UI implements ApplicationListener{
 
     Dialog buildDialog;
     Label buildLabel;
+    TextField packageField;
+    TextField destField;
 
     public UI(){
         Core.assets = new AssetManager();
         Core.batch = new SpriteBatch();
+        Core.atlas = new TextureAtlas(new Fi("ui/ui.atlas"));
 
         Styles.load();
         Core.scene = new Scene();
         Core.scene.registerStyles(Styles.class);
         Core.input.addProcessor(Core.scene);
 
-        setup.appName = "Test";
-        setup.packageName = "test";
-        setup.outputDir = "/home/anuke/Projects/Test";
+        setup.appName = "";
+        setup.packageName = "";
+        setup.outputDir = homeDir + "/";
         setup.template = templates[0];
         setup.modules = Seq.with(ProjectType.core, ProjectType.desktop, ProjectType.html);
         setup.dependencies = Seq.with(ProjectDependency.arc);
-        setup.sdkLocation = "/home/anuke/Android/Sdk";
+        setup.sdkLocation = "/home/anuke/Android/Sdk"; // todo custom location
         setup.callback = this::printlog;
     }
 
@@ -64,18 +68,26 @@ public class UI implements ApplicationListener{
 
                 prefs.add("Name: ").left();
                 prefs.field(setup.appName, name -> {
+                    if (setup.packageName.equals(setup.appName.toLowerCase())) {
+                        setup.packageName = name.toLowerCase();
+                        packageField.setText(setup.packageName);
+                    }
+
+                    if (setup.outputDir.equals(homeDir + "/" + setup.appName)) {
+                        setup.outputDir = homeDir + "/" + name;
+                        destField.setText(setup.outputDir);
+                    }
+
                     setup.appName = name;
-                    setup.outputDir = "/home/anuke/Projects/" + name;
-                    setup.packageName = name.toLowerCase();
                 }).width(fw);
                 prefs.row();
 
                 prefs.add("Package: ").left();
-                prefs.field(setup.packageName, name -> setup.packageName = name).update(f -> f.setText(setup.packageName)).width(fw);
+                packageField = prefs.field(setup.packageName, name -> setup.packageName = name).width(fw).get();
                 prefs.row();
 
                 prefs.add("Destination: ");
-                prefs.field(setup.outputDir, name -> setup.outputDir = name).update(f -> f.setText(setup.outputDir)).width(fw);
+                destField = prefs.field(setup.outputDir, name -> setup.outputDir = name).width(fw).get();
             });
 
             t.row();
@@ -217,6 +229,9 @@ public class UI implements ApplicationListener{
         public static TextField.TextFieldStyle defaultField;
         public static CheckBox.CheckBoxStyle defaultCheck;
         public static Button.ButtonStyle defaultButton;
+        public static Dialog.DialogStyle defaultDialog;
+        public static ScrollPane.ScrollPaneStyle defaultScrollPane;
+
         public static TextButton.TextButtonStyle defaultTextButton;
 
         public static void load() {
@@ -227,10 +242,10 @@ public class UI implements ApplicationListener{
                 font = Styles.font;
                 fontColor = Color.white;
                 disabledFontColor = Color.gray;
-                disabledBackground = drawable("underline-disabled.9");
+                disabledBackground = drawable("underline-disabled");
                 selection = drawable("selection");
-                background = drawable("underline.9");
-                invalidBackground = drawable("underline-red.9");
+                background = drawable("underline");
+                invalidBackground = drawable("underline-red");
                 cursor = drawable("cursor");
                 messageFont = Styles.font;
                 messageFontColor = Color.gray;
@@ -247,35 +262,34 @@ public class UI implements ApplicationListener{
                 disabledFontColor = Color.gray;
             }};
             defaultButton = new Button.ButtonStyle(){{
-                down = drawable("button-down.9");
-                up = drawable("button.9");
-                over = drawable("button-over.9");
-                disabled = drawable("button-gray.9");
+                down = drawable("button-down");
+                up = drawable("button");
+                over = drawable("button-over");
+                disabled = drawable("button-gray");
             }};
             defaultTextButton = new TextButton.TextButtonStyle(){{
-                over = drawable("button-over.9");
-                disabled = drawable("button-gray.9");
+                over = drawable("button-over");
+                disabled = drawable("button-gray");
                 font = Styles.font;
                 fontColor = Color.white;
                 disabledFontColor = Color.gray;
-                down = drawable("button-down.9");
-                up = drawable("button.9");
+                down = drawable("button-down");
+                up = drawable("button");
+            }};
+            defaultDialog = new Dialog.DialogStyle(){{
+                background = drawable("window-empty");
+                titleFont = Styles.font;
+                stageBackground = drawable("window-bg");
+                titleFontColor = Color.valueOf("ffd37f");
+            }};
+            defaultScrollPane = new ScrollPane.ScrollPaneStyle(){{
+                vScroll = drawable("scroll");
+                vScrollKnob = drawable("scroll-knob-vertical");
             }};
         }
 
-        public static Drawable drawable(String path) {
-            path = "ui/" + path + ".png";
-
-            if (!Core.assets.isLoaded(path)) {
-                Core.assets.load(path, Texture.class, new TextureLoader.TextureParameter());
-                Core.assets.finishLoadingAsset(path);
-            }
-
-            if (path.endsWith(".9.png")) {
-                return new NinePatchDrawable(new NinePatch(Core.assets.<Texture>get(path)));
-            } else {
-                return new TextureRegionDrawable(new TextureRegion(Core.assets.<Texture>get(path)));
-            }
+        public static Drawable drawable(String name) {
+            return Core.atlas.drawable(name);
         }
 
         public static void loadFonts() {

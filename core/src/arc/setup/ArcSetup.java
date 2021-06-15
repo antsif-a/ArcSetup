@@ -6,7 +6,7 @@ import arc.files.Fi;
 import arc.func.Cons;
 import arc.setup.DependencyBank.ProjectDependency;
 import arc.setup.DependencyBank.ProjectType;
-import arc.util.Log;
+import arc.util.*;
 
 import java.io.*;
 import java.util.*;
@@ -21,7 +21,7 @@ public class ArcSetup{
     public void build(){
         Project project = new Project();
 
-        String mainClass = appName;
+        String mainClass = Strings.capitalize(appName);
         String packageDir = packageName.replace('.', '/');
         String sdkPath = sdkLocation.replace('\\', '/');
 
@@ -41,7 +41,7 @@ public class ArcSetup{
 
         StringBuilder buildString = new StringBuilder(Core.files.internal("templates/base/build.gradle").readString()
             .replace("%APPNAME%", appName)
-            .replace("//%CLASSPATH_PLUGINS%", modules.map(type -> type.classpathPlugin).reduce("", (name, str) -> name == null ? str : str + "\n\tclasspath '" + name + "'").substring(2)));
+            .replace("//%CLASSPATH_PLUGINS%", modules.map(type -> type.classpathPlugin).reduce("", (name, str) -> name == null ? str : str + "\n\tclasspath '" + name + "'")/*.substring(2)*/));
 
         for(ProjectType ptype : modules){
             buildString.append("\n").append(ptemplate
@@ -206,7 +206,7 @@ public class ArcSetup{
             if(isTemp){
                 txt = new Fi(((TemporaryProjectFile)file).file).readString();
             }else{
-                txt = new Fi(file.resourceLoc + "/" + file.resourceName).readString();
+                txt = new Fi(file.resourceLoc + "\\" + file.resourceName).readString();
             }
 
             txt = replace(txt, values);
