@@ -1,8 +1,9 @@
 package arc.setup;
 
 import arc.struct.ObjectMap;
+import arc.util.*;
 
-public class DependencyBank{
+public class Dependencies {
     //Versions
     static String roboVMVersion = "2.3.0";
     static String buildToolsVersion = "28.0.3";
@@ -50,6 +51,11 @@ public class DependencyBank{
         ProjectType(String classpathPlugin, String... plugins){
             this.classpathPlugin = classpathPlugin;
             this.plugins = plugins;
+        }
+
+        @Override
+        public String toString() {
+            return this == ios ? "IOS" : Strings.capitalize(name());
         }
     }
 }

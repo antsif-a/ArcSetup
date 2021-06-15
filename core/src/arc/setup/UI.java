@@ -14,17 +14,14 @@ import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.scene.Scene;
-import arc.setup.DependencyBank.ProjectDependency;
-import arc.setup.DependencyBank.ProjectType;
+import arc.setup.Dependencies.ProjectDependency;
+import arc.setup.Dependencies.ProjectType;
 import arc.util.*;
 
 public class UI implements ApplicationListener{
     String homeDir = Core.files.absolute(Core.files.getExternalStoragePath()).toString();
-
-    String[] templates = {"default", "gamejam", "simple"};
-
-    Graphics graphics = Core.graphics;
-    ArcSetup setup = new ArcSetup();
+    Seq<String> templates = Seq.with(Fi.get("templates").list()).map(Fi::name);
+    ProjectBuilder builder;
 
     Dialog buildDialog;
     Label buildLabel;
@@ -32,23 +29,22 @@ public class UI implements ApplicationListener{
     TextField destField;
 
     public UI(){
-        Core.assets = new AssetManager();
-        Core.batch = new SpriteBatch();
-        Core.atlas = new TextureAtlas(new Fi("ui/ui.atlas"));
-
         Styles.load();
         Core.scene = new Scene();
         Core.scene.registerStyles(Styles.class);
         Core.input.addProcessor(Core.scene);
 
-        setup.appName = "Project";
-        setup.packageName = setup.appName.toLowerCase();
-        setup.outputDir = homeDir + "/" + setup.appName;
-        setup.template = templates[0];
-        setup.modules = Seq.with(ProjectType.core, ProjectType.desktop);
-        setup.dependencies = Seq.with(ProjectDependency.arc);
-        setup.sdkLocation = "/home/anuke/Android/Sdk"; // todo custom location
-        setup.callback = this::printlog;
+        templates.remove("base");
+
+        builder = new ProjectBuilder();
+        builder.appName = "Project";
+        builder.packageName = builder.appName.toLowerCase();
+        builder.outputDir = homeDir + "/" + builder.appName;
+        builder.template = templates.first();
+        builder.modules = Seq.with(ProjectType.core, ProjectType.desktop);
+        builder.dependencies = Seq.with(ProjectDependency.arc);
+        builder.sdkLocation = OS.propNoNull("ANDROID_HOME");
+        builder.print = this::log;
     }
 
     @Override
@@ -58,78 +54,77 @@ public class UI implements ApplicationListener{
         Core.scene.table(t -> {
             t.defaults().pad(10f);
 
-            t.row();
-
             t.table(prefs -> {
                 float fw = 400;
 
                 prefs.defaults().padTop(8);
 
                 prefs.add("Name: ").left();
-                prefs.field(setup.appName, name -> {
-                    if (setup.packageName.equals(setup.appName.toLowerCase())) {
-                        setup.packageName = name.toLowerCase();
-                        packageField.setText(setup.packageName);
+                prefs.field(builder.appName, name -> {
+                    if (builder.packageName.equals(builder.appName.toLowerCase())) {
+                        builder.packageName = name.toLowerCase();
+                        packageField.setText(builder.packageName);
                     }
 
-                    if (setup.outputDir.equals(homeDir + "/" + setup.appName)) {
-                        setup.outputDir = homeDir + "/" + name;
-                        destField.setText(setup.outputDir);
+                    if (builder.outputDir.equals(homeDir + "/" + builder.appName)) {
+                        builder.outputDir = homeDir + "/" + name;
+                        destField.setText(builder.outputDir);
                     }
 
-                    setup.appName = name;
+                    builder.appName = name;
                 }).width(fw);
+
                 prefs.row();
 
                 prefs.add("Package:").left();
-                packageField = prefs.field(setup.packageName, name -> setup.packageName = name).width(fw).get();
+                packageField = prefs.field(builder.packageName, name -> builder.packageName = name).width(fw).get();
+
                 prefs.row();
 
                 prefs.add("Destination:");
-                destField = prefs.field(setup.outputDir, name -> setup.outputDir = name).width(fw).get();
+                destField = prefs.field(builder.outputDir, name -> builder.outputDir = name).width(fw).get();
             });
 
             t.row();
 
             t.table(temp -> {
-                temp.marginTop(12).margin(14f).left();
-                temp.add("Template:").left().padBottom(6).left();
+                temp.marginTop(12);
 
+                temp.add("Template:").padBottom(6).left();
                 temp.row();
-                temp.table(groups -> {
+
+                temp.table(c -> {
                     ButtonGroup<CheckBox> group = new ButtonGroup<>();
 
-                    for(String type : templates){
-                        groups.check(Strings.capitalize(type), type.equals(setup.template), b -> setup.template = type)
-                        .group(group).pad(4).left().padRight(8).padLeft(0).fill();
-                    }
+                    templates.each(type -> {
+                        c.check(Strings.capitalize(type), type.equals(builder.template),
+                                b -> builder.template = type).group(group).pad(4).padRight(8).padLeft(0).fill();
+                    });
                 });
-            });
+            }).left();
 
             t.row();
 
             t.table(proj -> {
-                proj.marginTop(12).margin(14f).left();
+                proj.marginTop(12);
 
-                proj.add("Sub-projects:").left().padBottom(6).left();
+                proj.add("Sub-projects:").padBottom(6).left();
                 proj.row();
 
                 proj.table(c -> {
                     for(ProjectType type : ProjectType.values()){
-                        c.check(Strings.capitalize(type.name()),
-                        setup.modules.contains(type), b -> {
+                        c.check(type.toString(),
+                        builder.modules.contains(type), b -> {
                             if(b){
-                                setup.modules.add(type);
+                                builder.modules.add(type);
                             }else{
-                                setup.modules.remove(type);
+                                builder.modules.remove(type);
                             }
-                        }).pad(4).left().padRight(8).padLeft(0);
+                        }).pad(4).padRight(8).padLeft(0);
                     }
                 });
 
-            }).fillX();
-
-            //refer to initial commit to get the extensions menu out
+            }).left();
 
             t.row();
 
@@ -167,10 +162,10 @@ public class UI implements ApplicationListener{
         buildDialog.cont.add(pane).grow().padTop(8);
 
         new Thread(() -> {
-            printlog("Generating app in " + setup.outputDir + "...\n");
+            log("Generating app in " + builder.outputDir + "...\n");
 
             try{
-                setup.build();
+                builder.build();
             }catch(Exception e){
                 e.printStackTrace();
                 Core.app.post(() -> {
@@ -184,7 +179,7 @@ public class UI implements ApplicationListener{
                 return;
             }
 
-            printlog("Done!\n");
+            log("Done!\n");
 
             Core.app.post(() -> {
                 buildLabel.invalidateHierarchy();
@@ -200,7 +195,7 @@ public class UI implements ApplicationListener{
         buildDialog.show();
     }
 
-    void printlog(String str){
+    void log(String str){
         System.out.println(str);
         Core.app.post(() -> {
             buildLabel.getText().append(str).append("\n");

@@ -40,8 +40,10 @@ project(":desktop"){
 }
 
 project(":core"){
+    apply plugin: 'java-library'
+
     dependencies{
-        implementation arcModule('arc-core')
-        implementation arcModule('freetype')
+        api arcModule('arc-core')
+        api arcModule('extensions:freetype')
     }
 }

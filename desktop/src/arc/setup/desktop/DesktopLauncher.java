@@ -1,8 +1,7 @@
 package arc.setup.desktop;
 
-import arc.ApplicationCore;
 import arc.backend.sdl.*;
-import arc.setup.UI;
+import arc.setup.*;
 
 public class DesktopLauncher {
 	public static void main(String[] arg) {
@@ -13,11 +12,6 @@ public class DesktopLauncher {
 		config.decorated = false;
 		config.resizable = false;
 
-		new SdlApplication(new ApplicationCore(){
-			@Override
-			public void setup(){
-				add(new UI());
-			}
-		}, config);
+		new SdlApplication(new ArcSetup(), config);
 	}
 }
