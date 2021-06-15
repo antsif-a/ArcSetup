@@ -12,7 +12,7 @@ public class Dependencies {
 
     //Project plugins
     static String gwtPluginImport = "org.wisepersist:gwt-gradle-plugin:1.0.1";
-    static String androidPluginImport = "com.android.tools.build:gradle:3.4.1";
+    static String androidPluginImport = "com.android.tools.build:gradle:4.2.0";
     static String roboVMPluginImport = "com.mobidevelop.robovm:robovm-gradle-plugin:" + roboVMVersion;
 
     /**
@@ -26,8 +26,8 @@ public class Dependencies {
         arc(
             ProjectType.core, new String[]{"arc arc-core"},
             ProjectType.desktop, new String[]{"arc backends:backend-sdl", "arc natives:natives-desktop", "arc natives:natives-freetype-desktop"},
-            ProjectType.android, new String[]{"arc backends:backend-android", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"},
-            ProjectType.ios, new String[]{"arc backends:backend-robovm", "com.mobidevelop.robovm:robovm-rt:$roboVMVersion", "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"}
+            ProjectType.android, new String[]{"arc backends:backend-android", "arc natives:natives-android", "arc natives:natives-freetype-android"},
+            ProjectType.ios, new String[]{"arc backends:backend-robovm", "arc natives:natives-ios", "arc natives:natives-freetype-ios"}
             // ProjectType.html, new String[]{"arc backends:gwt", "com.badlogicgames.gdx:gdx:$gdxVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"}
         );
 

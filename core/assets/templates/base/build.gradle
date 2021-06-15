@@ -17,6 +17,7 @@ allprojects{
     ext{
         appName = "%APPNAME%"
         gdxVersion = '1.9.9'
+        roboVMVersion = '2.3.0'
         arcVersion = 'v126.2'
 
         arcModule = { String name ->
