@@ -41,11 +41,11 @@ public class UI implements ApplicationListener{
         Core.scene.registerStyles(Styles.class);
         Core.input.addProcessor(Core.scene);
 
-        setup.appName = "";
-        setup.packageName = "";
-        setup.outputDir = homeDir + "/";
+        setup.appName = "Project";
+        setup.packageName = setup.appName.toLowerCase();
+        setup.outputDir = homeDir + "/" + setup.appName;
         setup.template = templates[0];
-        setup.modules = Seq.with(ProjectType.core, ProjectType.desktop, ProjectType.html);
+        setup.modules = Seq.with(ProjectType.core, ProjectType.desktop);
         setup.dependencies = Seq.with(ProjectDependency.arc);
         setup.sdkLocation = "/home/anuke/Android/Sdk"; // todo custom location
         setup.callback = this::printlog;
@@ -224,6 +224,7 @@ public class UI implements ApplicationListener{
     }
 
     public static class Styles {
+        public static Drawable black;
         public static Font font;
         public static Label.LabelStyle defaultLabel;
         public static TextField.TextFieldStyle defaultField;
@@ -236,6 +237,8 @@ public class UI implements ApplicationListener{
 
         public static void load() {
             loadFonts();
+
+            black = ((TextureRegionDrawable)drawable("whiteui")).tint(0f, 0f, 0f, 1f);
 
             defaultLabel = new Label.LabelStyle(font, Color.white);
             defaultField = new TextField.TextFieldStyle(){{
@@ -279,7 +282,7 @@ public class UI implements ApplicationListener{
             defaultDialog = new Dialog.DialogStyle(){{
                 background = drawable("window-empty");
                 titleFont = Styles.font;
-                stageBackground = drawable("window-bg");
+                stageBackground = black;
                 titleFontColor = Color.valueOf("ffd37f");
             }};
             defaultScrollPane = new ScrollPane.ScrollPaneStyle(){{

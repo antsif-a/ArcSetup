@@ -73,7 +73,7 @@ public class ArcSetup{
         project.files.add(new ProjectFile(template, "core/build.gradle"));
 
         Fi src = Core.files.internal("templates/" + this.template + "/files");
-        String[] files = src.readString().replace("\n", "").split(",");
+        String[] files = src.readString().replace(System.lineSeparator(), "").split(",");
 
         project.files.add(new ProjectFile(this.template, "MainClass", "core/src/" + packageDir + "/" + mainClass + ".java", true));
 
@@ -90,7 +90,7 @@ public class ArcSetup{
         for(String dir : fileDirs){
             dir = "templates/base/core/" + dir + "/files";
             Fi file = Core.files.internal(dir);
-            String[] lines = file.readString().split("\n");
+            String[] lines = file.readString().split(System.lineSeparator());
 
             for(String respath : lines){
                 project.files.add(new ProjectFile(template, "core/" + respath, false));
@@ -206,7 +206,8 @@ public class ArcSetup{
             if(isTemp){
                 txt = new Fi(((TemporaryProjectFile)file).file).readString();
             }else{
-                txt = new Fi(file.resourceLoc + "\\" + file.resourceName).readString();
+                callback.get(file.resourceLoc + file.resourceName);
+                txt = Core.files.internal(file.resourceLoc + file.resourceName).readString();
             }
 
             txt = replace(txt, values);
