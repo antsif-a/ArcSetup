@@ -31,11 +31,8 @@ public class ArcSetup{
 
         Fi tmpSettings = Core.files.external(".tmp/arc-setup-settings.gradle");
         Fi tmpBuild = Core.files.external(".tmp/arc-setup-build.gradle");
-        String setBase = Seq.with(Core.files.internal("templates/base/settings.gradle").readString().split("\n"))
-            .select(s -> !s.startsWith("//#") || modules.contains(mod -> mod.name().equalsIgnoreCase(s.substring(0, s.indexOf(" ")).substring("//#PROJECT_".length()))))
-            .map(s -> s.startsWith("//#") ? s.substring(s.indexOf(" ") + 1) : s).toString("\n");
 
-        tmpSettings.writeString("include " + modules.toString(", ", m -> "'" + m.name() + "'") + "\n\n" + setBase);
+        tmpSettings.writeString("include " + modules.toString(", ", m -> "'" + m.name() + "'") + "\n");
 
         String ptemplate = Core.files.internal("templates/base/project_template").readString();
 
@@ -78,12 +75,14 @@ public class ArcSetup{
         project.files.add(new ProjectFile(this.template, "MainClass", "core/src/" + packageDir + "/" + mainClass + ".java", true));
 
         for(String sourcefile : files){
-            project.files.add(new ProjectFile(this.template, "" + sourcefile, "core/src/" + packageDir + "/" + sourcefile + ".java", true));
+            if (!sourcefile.isEmpty()) {
+                project.files.add(new ProjectFile(this.template, "" + sourcefile, "core/src/" + packageDir + "/" + sourcefile + ".java", true));
+            }
         }
 
-        if(modules.contains(ProjectType.html)){
-            project.files.add(new ProjectFile(template, "core/CoreGdxDefinition", "core/src/" + mainClass + ".gwt.xml", true));
-        }
+        // if(modules.contains(ProjectType.html)){
+        //     project.files.add(new ProjectFile(template, "core/CoreGdxDefinition", "core/src/" + mainClass + ".gwt.xml", true));
+        // }
 
         String[] fileDirs = {"assets", "assets-raw"};
 
@@ -124,17 +123,17 @@ public class ArcSetup{
             project.files.add(new ProjectFile(template, "local.properties", true));
         }
 
-        // html project
-        if(modules.contains(ProjectType.html)){
-            project.files.add(new ProjectFile(template, "html/build.gradle"));
-            project.files.add(new ProjectFile(template, "html/src/HtmlLauncher", "html/src/" + packageDir + "/client/HtmlLauncher.java", true));
-            project.files.add(new ProjectFile(template, "html/GdxDefinition", "html/src/" + packageDir + "/GdxDefinition.gwt.xml", true));
-            project.files.add(new ProjectFile(template, "html/war/index", "html/webapp/index.html", true));
-            project.files.add(new ProjectFile(template, "html/war/styles.css", "html/webapp/styles.css", false));
-            project.files.add(new ProjectFile(template, "html/war/soundmanager2-jsmin.js", "html/webapp/soundmanager2-jsmin.js", false));
-            project.files.add(new ProjectFile(template, "html/war/soundmanager2-setup.js", "html/webapp/soundmanager2-setup.js", false));
-            project.files.add(new ProjectFile(template, "html/war/WEB-INF/web.xml", "html/webapp/WEB-INF/web.xml", true));
-        }
+        // // html project
+        // if(modules.contains(ProjectType.html)){
+        //     project.files.add(new ProjectFile(template, "html/build.gradle"));
+        //     project.files.add(new ProjectFile(template, "html/src/HtmlLauncher", "html/src/" + packageDir + "/client/HtmlLauncher.java", true));
+        //     project.files.add(new ProjectFile(template, "html/GdxDefinition", "html/src/" + packageDir + "/GdxDefinition.gwt.xml", true));
+        //     project.files.add(new ProjectFile(template, "html/war/index", "html/webapp/index.html", true));
+        //     project.files.add(new ProjectFile(template, "html/war/styles.css", "html/webapp/styles.css", false));
+        //     project.files.add(new ProjectFile(template, "html/war/soundmanager2-jsmin.js", "html/webapp/soundmanager2-jsmin.js", false));
+        //     project.files.add(new ProjectFile(template, "html/war/soundmanager2-setup.js", "html/webapp/soundmanager2-setup.js", false));
+        //     project.files.add(new ProjectFile(template, "html/war/WEB-INF/web.xml", "html/webapp/WEB-INF/web.xml", true));
+        // }
 
         // ios robovm
         if(modules.contains(ProjectType.ios)){

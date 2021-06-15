@@ -1,13 +1,10 @@
 package %PACKAGE%;
 
-import io.anuke.arc.ApplicationCore;
+import arc.ApplicationCore;
 
-public class %MAIN_CLASS% extends ModuleCore {
-    public static UI ui;
-	
+public class %MAIN_CLASS% extends ApplicationCore {
+
 	@Override
-	public void setup(){
-		add(ui = new UI());
+	public void setup() {
 	}
-	
 }

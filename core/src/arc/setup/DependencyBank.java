@@ -24,10 +24,10 @@ public class DependencyBank{
     public enum ProjectDependency{
         arc(
             ProjectType.core, new String[]{"arc arc-core"},
-            ProjectType.desktop, new String[]{"arc backends:backend-lwjgl3", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"},
+            ProjectType.desktop, new String[]{"arc backends:backend-sdl", "arc natives:natives-desktop", "arc natives:natives-freetype-desktop"},
             ProjectType.android, new String[]{"arc backends:backend-android", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"},
-            ProjectType.ios, new String[]{"arc backends:backend-robovm", "com.mobidevelop.robovm:robovm-rt:$roboVMVersion", "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"},
-            ProjectType.html, new String[]{"arc backends:gwt", "com.badlogicgames.gdx:gdx:$gdxVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"}
+            ProjectType.ios, new String[]{"arc backends:backend-robovm", "com.mobidevelop.robovm:robovm-rt:$roboVMVersion", "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion", "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"}
+            // ProjectType.html, new String[]{"arc backends:gwt", "com.badlogicgames.gdx:gdx:$gdxVersion:sources", "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"}
         );
 
         public final ObjectMap<ProjectType, String[]> dependencies;
@@ -42,7 +42,7 @@ public class DependencyBank{
         desktop(null, "java"),
         android(androidPluginImport, "com.android.application"),
         ios(roboVMPluginImport, "java", "robovm"),
-        html(gwtPluginImport, "gwt", "war");
+        /* html(gwtPluginImport, "gwt", "war")*/; // todo teavm?
 
         public final String classpathPlugin;
         public final String[] plugins;
@@ -52,5 +52,4 @@ public class DependencyBank{
             this.plugins = plugins;
         }
     }
-
 }

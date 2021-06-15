@@ -53,7 +53,6 @@ public class UI implements ApplicationListener{
 
     @Override
     public void init(){
-        // Core.scene.skin.getFont("default").setUseIntegerPositions(true);
         Core.graphics.setContinuousRendering(false);
 
         Core.scene.table(t -> {
@@ -82,11 +81,11 @@ public class UI implements ApplicationListener{
                 }).width(fw);
                 prefs.row();
 
-                prefs.add("Package: ").left();
+                prefs.add("Package:").left();
                 packageField = prefs.field(setup.packageName, name -> setup.packageName = name).width(fw).get();
                 prefs.row();
 
-                prefs.add("Destination: ");
+                prefs.add("Destination:");
                 destField = prefs.field(setup.outputDir, name -> setup.outputDir = name).width(fw).get();
             });
 

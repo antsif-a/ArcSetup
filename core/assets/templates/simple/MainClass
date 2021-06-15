@@ -1,16 +1,10 @@
 package %PACKAGE%;
 
-import io.anuke.ucore.modules.ModuleCore;
-import io.anuke.ucore.core.Core;
+import arc.ApplicationCore;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-public class %MAIN_CLASS% extends ModuleCore {
+public class %MAIN_CLASS% extends ApplicationCore {
 	
 	@Override
-	public void init(){
-		Core.batch = new SpriteBatch();
-		module(new UI());
+	public void setup() {
 	}
-	
 }

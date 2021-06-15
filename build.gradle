@@ -17,6 +17,11 @@ allprojects{
         appName = "ArcSetup"
         gdxVersion = '1.9.9'
         arcVersion = 'v126.2'
+		
+		arcModule = { String name ->
+            if(name.contains(':')) name = name.split(':')[name.split(':').length - 1]
+            return "com.github.Anuken.Arc:$name:$arcVersion"
+        }
     }
 
     repositories{
@@ -28,16 +33,15 @@ allprojects{
 project(":desktop"){
     dependencies{
         implementation project(":core")
-        implementation "com.github.Anuken.Arc:arc-core:$arcVersion"
-        implementation "com.github.Anuken.Arc:backend-sdl:$arcVersion"
-        implementation "com.github.Anuken.Arc:natives-desktop:$arcVersion"
-        implementation "com.github.Anuken.Arc:natives-freetype-desktop:$arcVersion"
+        implementation arcModule('backends:backend-sdl')
+        implementation arcModule('natives:natives-desktop')
+        implementation arcModule('natives:natives-freetype-desktop')
     }
 }
 
 project(":core"){
     dependencies{
-        implementation "com.github.Anuken.Arc:arc-core:$arcVersion"
-        implementation "com.github.Anuken.Arc:freetype:$arcVersion"
+        implementation arcModule('arc-core')
+        implementation arcModule('freetype')
     }
 }
