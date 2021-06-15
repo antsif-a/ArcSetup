@@ -1,6 +1,6 @@
-package io.anuke.arc.setup;
+package arc.setup;
 
-import io.anuke.arc.collection.ObjectMap;
+import arc.struct.ObjectMap;
 
 public class DependencyBank{
     //Versions

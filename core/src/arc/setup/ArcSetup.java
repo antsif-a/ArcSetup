@@ -1,22 +1,22 @@
-package io.anuke.arc.setup;
+package arc.setup;
 
-import io.anuke.arc.Core;
-import io.anuke.arc.collection.Array;
-import io.anuke.arc.files.FileHandle;
-import io.anuke.arc.function.Consumer;
-import io.anuke.arc.setup.DependencyBank.ProjectDependency;
-import io.anuke.arc.setup.DependencyBank.ProjectType;
-import io.anuke.arc.util.Log;
+import arc.Core;
+import arc.struct.Seq;
+import arc.files.Fi;
+import arc.func.Cons;
+import arc.setup.DependencyBank.ProjectDependency;
+import arc.setup.DependencyBank.ProjectType;
+import arc.util.Log;
 
 import java.io.*;
 import java.util.*;
 
 public class ArcSetup{
-    public Array<ProjectType> modules = new Array<>();
-    public Array<ProjectDependency> dependencies = new Array<>();
+    public Seq<ProjectType> modules = new Seq<>();
+    public Seq<ProjectDependency> dependencies = new Seq<>();
     public String template, outputDir, appName, packageName, sdkLocation;
-    public Consumer<String> callback = System.out::print;
-    public Array<String> gradleArgs = new Array<>();
+    public Cons<String> callback = System.out::print;
+    public Seq<String> gradleArgs = new Seq<>();
 
     public void build(){
         Project project = new Project();
@@ -26,12 +26,12 @@ public class ArcSetup{
         String sdkPath = sdkLocation.replace('\\', '/');
 
         if(!isSdkLocationValid(sdkLocation)){
-            callback.accept("Android SDK location '" + sdkLocation + "' doesn't contain an SDK!\n");
+            callback.get("Android SDK location '" + sdkLocation + "' doesn't contain an SDK!\n");
         }
 
-        FileHandle tmpSettings = Core.files.external(".tmp/arc-setup-settings.gradle");
-        FileHandle tmpBuild = Core.files.external(".tmp/arc-setup-build.gradle");
-        String setBase = Array.with(Core.files.internal("templates/base/settings.gradle").readString().split("\n"))
+        Fi tmpSettings = Core.files.external(".tmp/arc-setup-settings.gradle");
+        Fi tmpBuild = Core.files.external(".tmp/arc-setup-build.gradle");
+        String setBase = Seq.with(Core.files.internal("templates/base/settings.gradle").readString().split("\n"))
             .select(s -> !s.startsWith("//#") || modules.contains(mod -> mod.name().equalsIgnoreCase(s.substring(0, s.indexOf(" ")).substring("//#PROJECT_".length()))))
             .map(s -> s.startsWith("//#") ? s.substring(s.indexOf(" ") + 1) : s).toString("\n");
 
@@ -46,11 +46,11 @@ public class ArcSetup{
         for(ProjectType ptype : modules){
             buildString.append("\n").append(ptemplate
                 .replace("%NAME%", ptype.name())
-                .replace("%PLUGINS%", Array.with(ptype.plugins).reduce("", (plugin, str) -> str + "\n\tapply plugin: \"" + plugin + "\"").substring(2)
+                .replace("%PLUGINS%", Seq.with(ptype.plugins).reduce("", (plugin, str) -> str + "\n\tapply plugin: \"" + plugin + "\"").substring(2)
                         + (ptype == ProjectType.android ? "\n\n\tconfigurations{ natives }" : ""))
                 .replace("%DEPENDENCIES%", (ptype == ProjectType.core ? "" : "implementation project(\":core\")\n\t\t")  +
                     dependencies.reduce("", (dependency, str) -> (!dependency.dependencies.containsKey(ptype) ? str :
-                    Array.with(dependency.dependencies.get(ptype)).reduce("", (dep, bstr) -> bstr + "\n\t\t" +
+                    Seq.with(dependency.dependencies.get(ptype)).reduce("", (dep, bstr) -> bstr + "\n\t\t" +
                     ((ptype == ProjectType.android && dep.contains("native")) ? "natives \"" + dep + "\"" :
                     dep.contains("arc ") ? "implementation arcModule(\"" + dep.replace("arc ", "") + "\")" : "implementation \"" + dep + "\"")))).substring(3)));
         }
@@ -72,7 +72,7 @@ public class ArcSetup{
         // core project
         project.files.add(new ProjectFile(template, "core/build.gradle"));
 
-        FileHandle src = Core.files.internal("templates/" + this.template + "/files");
+        Fi src = Core.files.internal("templates/" + this.template + "/files");
         String[] files = src.readString().replace("\n", "").split(",");
 
         project.files.add(new ProjectFile(this.template, "MainClass", "core/src/" + packageDir + "/" + mainClass + ".java", true));
@@ -89,7 +89,7 @@ public class ArcSetup{
 
         for(String dir : fileDirs){
             dir = "templates/base/core/" + dir + "/files";
-            FileHandle file = Core.files.internal(dir);
+            Fi file = Core.files.internal(dir);
             String[] lines = file.readString().split("\n");
 
             for(String respath : lines){
@@ -193,7 +193,7 @@ public class ArcSetup{
     }
 
     private void copyFile(ProjectFile file, File out, Map<String, String> values){
-        FileHandle outFile = new FileHandle(new File(out, file.outputName));
+        Fi outFile = new Fi(new File(out, file.outputName));
 
         if(!outFile.parent().exists()){
             outFile.parent().mkdirs();
@@ -204,9 +204,9 @@ public class ArcSetup{
         if(file.isTemplate){
             String txt;
             if(isTemp){
-                txt = new FileHandle(((TemporaryProjectFile)file).file).readString();
+                txt = new Fi(((TemporaryProjectFile)file).file).readString();
             }else{
-                txt = new FileHandle(file.resourceLoc + "/" + file.resourceName).readString();
+                txt = new Fi(file.resourceLoc + "/" + file.resourceName).readString();
             }
 
             txt = replace(txt, values);
@@ -242,11 +242,11 @@ public class ArcSetup{
      * Execute the file with the given parameters.
      * @return whether the execution succeeded
      */
-    private static boolean execute(File workingDir, String windowsFile, String unixFile, String parameters, Consumer<String> callback){
+    private static boolean execute(File workingDir, String windowsFile, String unixFile, String parameters, Cons<String> callback){
         String exec = workingDir.getAbsolutePath() + "/" + (System.getProperty("os.name").contains("Windows") ? windowsFile : unixFile);
         String log = "Executing '" + exec + " " + parameters + "'";
-        callback.accept(log);
-        callback.accept("\n");
+        callback.get(log);
+        callback.get("\n");
 
         String[] params = parameters.split(" ");
         String[] commands = new String[params.length + 1];
@@ -261,7 +261,7 @@ public class ArcSetup{
                 try{
                     String result;
                     while((result = reader.readLine()) != null){
-                        callback.accept(result);
+                        callback.get(result);
                     }
                 }catch(IOException e){
                     e.printStackTrace();
