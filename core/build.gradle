@@ -5,7 +5,8 @@ sourceCompatibility = 1.8
 
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = ["src/"]
+sourceSets.main.resources.srcDirs = ["assets/"]
 
 task pack{
 	doLast{
