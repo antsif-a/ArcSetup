@@ -22,7 +22,7 @@ public class Dependencies {
      * These depedency strings can be later used in a simple gradle plugin to manipulate the users project either after/before
      * project generation
      */
-    public enum ProjectDependency{
+    public enum ProjectDependency {
         arc(
             ProjectType.core, new String[]{"arc arc-core"},
             ProjectType.desktop, new String[]{"arc backends:backend-sdl", "arc natives:natives-desktop", "arc natives:natives-freetype-desktop"},
@@ -33,12 +33,12 @@ public class Dependencies {
 
         public final ObjectMap<ProjectType, String[]> dependencies;
 
-        ProjectDependency(Object... deps){
+        ProjectDependency(Object... deps) {
             this.dependencies = ObjectMap.of(deps);
         }
     }
 
-    public enum ProjectType{
+    public enum ProjectType {
         core(null, "java"),
         desktop(null, "java"),
         android(androidPluginImport, "com.android.application"),
@@ -48,7 +48,7 @@ public class Dependencies {
         public final String classpathPlugin;
         public final String[] plugins;
 
-        ProjectType(String classpathPlugin, String... plugins){
+        ProjectType(String classpathPlugin, String... plugins) {
             this.classpathPlugin = classpathPlugin;
             this.plugins = plugins;
         }

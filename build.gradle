@@ -1,20 +1,21 @@
-buildscript{
-    repositories{
+buildscript {
+    repositories {
         mavenCentral()
     }
 
-    dependencies{
-        classpath "com.badlogicgames.gdx:gdx-tools:1.9.9"
+    dependencies {
+        classpath 'com.badlogicgames.gdx:gdx-tools:1.9.9'
     }
 }
 
-allprojects{
-    apply plugin: "java"
+allprojects {
+    apply plugin: 'java'
 
     version = '1.0'
+    sourceCompatibility = 1.8
 
-    ext{
-        appName = "ArcSetup"
+    ext {
+        appName = 'ArcSetup'
         gdxVersion = '1.9.9'
         arcVersion = 'v126.2'
 		
@@ -24,9 +25,9 @@ allprojects{
         }
     }
 
-    repositories{
+    repositories {
         mavenCentral()
-        maven{ url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' }
     }
 
     tasks.withType(JavaCompile) {
@@ -34,8 +35,8 @@ allprojects{
     }
 }
 
-project(":desktop"){
-    dependencies{
+project(":desktop") {
+    dependencies {
         implementation project(":core")
         implementation arcModule('backends:backend-sdl')
         implementation arcModule('natives:natives-desktop')
@@ -43,10 +44,10 @@ project(":desktop"){
     }
 }
 
-project(":core"){
+project(":core") {
     apply plugin: 'java-library'
 
-    dependencies{
+    dependencies {
         api arcModule('arc-core')
         api arcModule('extensions:freetype')
     }

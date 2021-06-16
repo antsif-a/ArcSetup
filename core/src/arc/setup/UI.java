@@ -1,8 +1,6 @@
 package arc.setup;
 
 import arc.*;
-import arc.assets.*;
-import arc.assets.loaders.*;
 import arc.files.*;
 import arc.freetype.*;
 import arc.freetype.FreetypeFontLoader.*;
@@ -17,7 +15,7 @@ import arc.setup.Dependencies.ProjectDependency;
 import arc.setup.Dependencies.ProjectType;
 import arc.util.*;
 
-public class UI implements ApplicationListener{
+public class UI implements ApplicationListener {
     String homeDir = Core.files.absolute(Core.files.getExternalStoragePath()).toString();
     Seq<String> templates = Seq.with(Fi.get("templates").list()).map(Fi::name);
     ProjectBuilder builder;
@@ -27,7 +25,7 @@ public class UI implements ApplicationListener{
     TextField packageField;
     TextField destField;
 
-    public UI(){
+    public UI() {
         Styles.load();
         Core.scene = new Scene();
         Core.scene.registerStyles(Styles.class);
@@ -47,7 +45,7 @@ public class UI implements ApplicationListener{
     }
 
     @Override
-    public void init(){
+    public void init() {
         Core.graphics.setContinuousRendering(false);
 
         Core.scene.table(t -> {
@@ -111,7 +109,7 @@ public class UI implements ApplicationListener{
                 proj.row();
 
                 proj.table(c -> {
-                    for(ProjectType type : ProjectType.values()){
+                    for (ProjectType type : ProjectType.values()) {
                         c.check(type.toString(),
                         builder.modules.contains(type), b -> {
                             if(b){
@@ -150,11 +148,11 @@ public class UI implements ApplicationListener{
         });
     }
 
-    void generate(){
+    void generate() {
         callSetup();
     }
 
-    void callSetup(){
+    void callSetup() {
         buildDialog = new Dialog("Project Log");
         buildDialog.setFillParent(true);
         buildLabel = new Label("");
@@ -201,7 +199,7 @@ public class UI implements ApplicationListener{
         buildDialog.show();
     }
 
-    void log(String str){
+    void log(String str) {
         System.out.println(str);
         Core.app.post(() -> {
             buildLabel.getText().append(str).append("\n");
@@ -211,7 +209,7 @@ public class UI implements ApplicationListener{
     }
 
     @Override
-    public void update(){
+    public void update() {
         Core.graphics.clear(Color.black);
         Core.scene.act();
         Core.scene.draw();
@@ -219,7 +217,7 @@ public class UI implements ApplicationListener{
     }
 
     @Override
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         Core.scene.resize(width, height);
     }
 

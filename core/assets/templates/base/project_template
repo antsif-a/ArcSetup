@@ -1,7 +1,7 @@
-project(":%NAME%"){
+project(":%NAME%") {
     %PLUGINS%
 
-    dependencies{
+    dependencies {
         %DEPENDENCIES%
     }
 }

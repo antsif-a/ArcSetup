@@ -1,21 +1,25 @@
-buildscript{
-    repositories{
-        mavenLocal()
+buildscript {
+    repositories {
         mavenCentral()
-        maven{ url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://maven.google.com/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://jitpack.io' }
     }
 
-    dependencies{
+    dependencies {
         //%CLASSPATH_PLUGINS%
-        classpath "com.badlogicgames.gdx:gdx-tools:1.9.9"
+        classpath 'com.badlogicgames.gdx:gdx-tools:1.9.9'
     }
 }
 
-allprojects{
-    version = '1.0'
+allprojects {
+    apply plugin: 'java'
 
-    ext{
-        appName = "%APPNAME%"
+    sourceCompatibility = 14
+    targetCompatibility = 1.8
+
+    ext {
+        appName = '%APPNAME%'
         gdxVersion = '1.9.9'
         roboVMVersion = '2.3.0'
         arcVersion = 'v126.2'
@@ -26,11 +30,10 @@ allprojects{
         }
     }
 
-    repositories{
-        mavenLocal()
+    repositories {
         mavenCentral()
-        maven{ url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven{ url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven{ url 'https://jitpack.io' }
+        maven { url 'https://maven.google.com/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://jitpack.io' }
     }
 }

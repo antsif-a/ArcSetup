@@ -1,32 +1,27 @@
-apply plugin: "java"
+sourceSets.main.java.srcDirs = ['src']
 
-sourceCompatibility = 1.8
-sourceSets.main.java.srcDirs = [ "src/" ]
-
-project.ext.mainClassName = "%PACKAGE%.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../core/assets");
+project.ext.mainClassName = '%PACKAGE%.desktop.DesktopLauncher'
+project.ext.assetsDir = new File('../core/assets')
 
 task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass.set project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue true
 
-    if(System.getProperty("os.name").toLowerCase().contains("mac")){
-        jvmArgs "-XstartOnFirstThread"
+    if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+        jvmArgs '-XstartOnFirstThread'
     }
 }
 
-task dist(type: Jar) {
+task dist(type: Jar, dependsOn: classes) {
     from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
-
-    manifest {
-        attributes 'Main-Class': project.mainClassName
+    from files(project.assetsDir)
+    from {
+        configurations.compile.collect { -> zipTree(it) }
     }
-}
 
-dist.dependsOn classes
+    manifest.attributes 'Main-Class': project.mainClassName
+}
