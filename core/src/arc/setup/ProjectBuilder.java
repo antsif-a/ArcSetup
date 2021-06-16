@@ -200,8 +200,8 @@ public class ProjectBuilder {
 
         if (file.isTemplate) {
             String txt;
-            if (file instanceof TemporaryProjectFile tf) {
-                txt = new Fi((tf).file).readString();
+            if (file instanceof TemporaryProjectFile) {
+                txt = new Fi(((TemporaryProjectFile)file).file).readString();
             } else {
                 txt = Core.files.internal(file.resourceLoc + file.resourceName).readString();
             }
