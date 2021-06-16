@@ -3,7 +3,6 @@ package arc.setup;
 import arc.*;
 import arc.assets.*;
 import arc.assets.loaders.*;
-import arc.assets.loaders.resolvers.*;
 import arc.files.*;
 import arc.freetype.*;
 import arc.freetype.FreetypeFontLoader.*;
@@ -134,12 +133,19 @@ public class UI implements ApplicationListener{
         Core.scene.table(t -> t.top().table(h -> h.add("Arc Project Setup").color(Color.coral).get().setFontScale(1f)).growX().height(50f));
 
         Core.scene.table(t -> {
-            float sz = 50;
+            float sz = 40;
 
             t.top().right();
             t.marginTop(0).marginRight(0);
 
-            // todo: t.button("-", graphics.getWindow()::iconifyWindow).size(sz);
+            t.button("-", () -> {
+                try {
+                    Class.forName("arc.backend.sdl.jni.SDL").getDeclaredMethod("SDL_MinimizeWindow", long.class)
+                            .invoke(null, Reflect.<Long>get(Class.forName("arc.backend.sdl.SdlApplication"), Core.app, "window"));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }).size(sz).padRight(5);
             t.button("X", Core.app::exit).size(sz);
         });
     }
@@ -262,11 +268,11 @@ public class UI implements ApplicationListener{
                 down = drawable("button-down");
                 up = drawable("button");
                 over = drawable("button-over");
-                disabled = drawable("button-gray");
+                disabled = drawable("button-disabled");
             }};
             defaultTextButton = new TextButton.TextButtonStyle(){{
                 over = drawable("button-over");
-                disabled = drawable("button-gray");
+                disabled = drawable("button-disabled");
                 font = Styles.font;
                 fontColor = Color.white;
                 disabledFontColor = Color.gray;
@@ -290,37 +296,16 @@ public class UI implements ApplicationListener{
         }
 
         public static void loadFonts() {
-            FileHandleResolver resolver = new InternalFileHandleResolver();
-            Core.assets.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
-            Core.assets.setLoader(Font.class, null, new FreetypeFontLoader(resolver){
-                ObjectSet<FreeTypeFontGenerator.FreeTypeFontParameter> scaled = new ObjectSet<>();
-
-                @Override
-                public Font loadSync(AssetManager manager, String fileName, Fi file, FreeTypeFontLoaderParameter parameter){
-                    if(fileName.equals("outline")){
-                        parameter.fontParameters.borderWidth = Scl.scl(2f);
-                        parameter.fontParameters.spaceX -= parameter.fontParameters.borderWidth;
-                    }
-
-                    if(!scaled.contains(parameter.fontParameters) && !ObjectSet.with("iconLarge").contains(fileName)){
-                        parameter.fontParameters.size = (int)(Scl.scl(parameter.fontParameters.size));
-                        scaled.add(parameter.fontParameters);
-                    }
-
-                    parameter.fontParameters.magFilter = Texture.TextureFilter.linear;
-                    parameter.fontParameters.minFilter = Texture.TextureFilter.linear;
-                    return super.loadSync(manager, fileName, file, parameter);
-                }
-            });
+            Core.assets.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(Core.files::internal));
+            Core.assets.setLoader(Font.class, new FreetypeFontLoader(Core.files::internal));
 
             FreeTypeFontGenerator.FreeTypeFontParameter p = new FreeTypeFontGenerator.FreeTypeFontParameter(){{
-                size = 16;
                 incremental = true;
             }};
 
-            Core.assets.load("font", Font.class, new FreeTypeFontLoaderParameter("fonts/audiowide-regular.ttf", p)).loaded = f -> font = (Font)f;
+            Core.assets.load("font", Font.class, new FreeTypeFontLoaderParameter("fonts/audiowide-regular.ttf", p));
             Core.assets.finishLoadingAsset("font");
-
+            font = Core.assets.get("font");
             font.setUseIntegerPositions(true);
         }
     }

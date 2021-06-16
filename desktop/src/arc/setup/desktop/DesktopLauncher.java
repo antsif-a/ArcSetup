@@ -1,7 +1,10 @@
 package arc.setup.desktop;
 
+import arc.*;
 import arc.backend.sdl.*;
+import arc.backend.sdl.jni.*;
 import arc.setup.*;
+import arc.util.*;
 
 public class DesktopLauncher {
 	public static void main(String[] arg) {
