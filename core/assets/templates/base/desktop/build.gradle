@@ -20,8 +20,11 @@ task dist(type: Jar, dependsOn: classes) {
     from files(sourceSets.main.output.resourcesDir)
     from files(project.assetsDir)
     from {
-        configurations.compile.collect { -> zipTree(it) }
+        configurations.runtimeClasspath.collect{ it.isDirectory() ? it : zipTree(it) }
     }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFileName.set "${appName}.jar"
 
     manifest.attributes 'Main-Class': project.mainClassName
 }
