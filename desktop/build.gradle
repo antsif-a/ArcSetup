@@ -7,11 +7,11 @@ project.ext.mainClassName = "arc.setup.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../core/assets");
 
 task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass.set project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue true
 
     if(System.getProperty("os.name").toLowerCase().contains("mac")){
         jvmArgs "-XstartOnFirstThread"
@@ -19,11 +19,11 @@ task run(dependsOn: classes, type: JavaExec) {
 }
 
 task debug(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass.set project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue true
     debug = true
 }
 
@@ -33,9 +33,7 @@ task dist(type: Jar) {
     from {configurations.compile.collect {zipTree(it)}}
     from files(project.assetsDir);
 
-    manifest {
-        attributes 'Main-Class': project.mainClassName
-    }
+    manifest.attributes 'Main-Class': project.mainClassName
 }
 
 dist.dependsOn classes
