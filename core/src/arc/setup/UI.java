@@ -1,7 +1,6 @@
 package arc.setup;
 
 import arc.*;
-import arc.files.*;
 import arc.freetype.*;
 import arc.freetype.FreetypeFontLoader.*;
 import arc.graphics.*;
@@ -17,7 +16,7 @@ import arc.util.*;
 
 public class UI implements ApplicationListener {
     String homeDir = Core.files.absolute(Core.files.getExternalStoragePath()).toString();
-    Seq<String> templates = Seq.with(Fi.get("templates").list()).map(Fi::name);
+    Seq<String> templates = Seq.with(Core.files.internal("templates/list.txt").readString().replace("\n", "").split(","));
     ProjectBuilder builder;
 
     Dialog buildDialog;
@@ -30,8 +29,6 @@ public class UI implements ApplicationListener {
         Core.scene = new Scene();
         Core.scene.registerStyles(Styles.class);
         Core.input.addProcessor(Core.scene);
-
-        templates.remove("base");
 
         builder = new ProjectBuilder();
         builder.appName = "Project";
@@ -112,9 +109,9 @@ public class UI implements ApplicationListener {
                     for (ProjectType type : ProjectType.values()) {
                         c.check(type.toString(),
                         builder.modules.contains(type), b -> {
-                            if(b){
+                            if (b) {
                                 builder.modules.add(type);
-                            }else{
+                            } else {
                                 builder.modules.remove(type);
                             }
                         }).pad(4).padRight(8).padLeft(0);

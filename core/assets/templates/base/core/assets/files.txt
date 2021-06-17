@@ -1,0 +1,2 @@
+assets/sprites/sprites.atlas
+assets/sprites/sprites.png

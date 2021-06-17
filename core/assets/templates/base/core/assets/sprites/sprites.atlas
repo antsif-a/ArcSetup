@@ -1,0 +1,163 @@
+
+ui.png
+size: 256,128
+format: rgba8888
+filter: nearest,nearest
+repeat: none
+button
+  rotate: false
+  xy: 189, 99
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+button-disabled
+  rotate: false
+  xy: 75, 99
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+button-down
+  rotate: false
+  xy: 113, 99
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+button-over
+  rotate: false
+  xy: 151, 99
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+check-disabled
+  rotate: false
+  xy: 31, 66
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+check-off
+  rotate: false
+  xy: 65, 65
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+check-on
+  rotate: false
+  xy: 99, 65
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+check-on-disabled
+  rotate: false
+  xy: 133, 65
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+check-on-over
+  rotate: false
+  xy: 167, 65
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+check-over
+  rotate: false
+  xy: 201, 65
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 227, 122
+  size: 4, 4
+  orig: 4, 4
+  offset: 0, 0
+  index: -1
+scroll
+  rotate: false
+  xy: 30, 28
+  size: 24, 35
+  split: 10, 10, 6, 5
+  orig: 24, 35
+  offset: 0, 0
+  index: -1
+scroll-horizontal
+  rotate: false
+  xy: 30, 2
+  size: 35, 24
+  split: 6, 5, 10, 10
+  orig: 35, 24
+  offset: 0, 0
+  index: -1
+scroll-knob-horizontal
+  rotate: false
+  xy: 31, 100
+  size: 42, 26
+  orig: 42, 26
+  offset: 0, 0
+  index: -1
+scroll-knob-vertical
+  rotate: false
+  xy: 2, 21
+  size: 26, 42
+  orig: 26, 42
+  offset: 0, 0
+  index: -1
+selection
+  rotate: false
+  xy: 56, 33
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+underline
+  rotate: false
+  xy: 132, 36
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+underline-disabled
+  rotate: false
+  xy: 56, 36
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+underline-red
+  rotate: false
+  xy: 94, 36
+  size: 36, 27
+  split: 12, 12, 12, 12
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+whiteui
+  rotate: false
+  xy: 2, 16
+  size: 3, 3
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+window-empty
+  rotate: false
+  xy: 2, 65
+  size: 27, 61
+  split: 4, 4, 2, 2
+  orig: 27, 61
+  offset: 0, 0
+  index: -1

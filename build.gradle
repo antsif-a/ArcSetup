@@ -1,10 +1,21 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+
+    ext {
+        arcVersion = 'v126.2'
+
+        arcModule = { String name ->
+            if(name.contains(':')) name = name.split(':')[name.split(':').length - 1]
+            return "com.github.Anuken.Arc:$name:$arcVersion"
+        }
     }
 
     dependencies {
-        classpath 'com.badlogicgames.gdx:gdx-tools:1.9.9'
+        classpath arcModule('arc-core')
+        classpath arcModule('extensions:packer')
     }
 }
 
@@ -16,13 +27,6 @@ allprojects {
 
     ext {
         appName = 'ArcSetup'
-        gdxVersion = '1.9.9'
-        arcVersion = 'v126.2'
-		
-		arcModule = { String name ->
-            if(name.contains(':')) name = name.split(':')[name.split(':').length - 1]
-            return "com.github.Anuken.Arc:$name:$arcVersion"
-        }
     }
 
     repositories {

@@ -5,10 +5,11 @@ import arc.backend.sdl.SdlConfig;
 import %PACKAGE%.%MAIN_CLASS%;
 
 public class DesktopLauncher {
-	public static void main(String[] arg) {
+	public static void main(String[] args) {
 		SdlConfig config = new SdlConfig();
 		config.title = "%APP_NAME%";
 		config.maximized = true;
+
 		new SdlApplication(new %MAIN_CLASS%(), config);
 	}
 }

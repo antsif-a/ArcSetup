@@ -1,10 +1,10 @@
-import com.badlogic.gdx.tools.texturepacker.TexturePacker
+import arc.packer.TexturePacker
 
 sourceSets.main.java.srcDirs = ['src']
 sourceSets.main.resources.srcDirs = ['assets']
 
 task pack {
 	doLast {
-		TexturePacker.process('core/assets-raw/ui/', 'core/assets/ui/', 'ui.atlas')
+		TexturePacker.process("$rootDir/core/assets-raw/ui/", "$rootDir/core/assets/ui/", 'ui.atlas')
 	}
 }

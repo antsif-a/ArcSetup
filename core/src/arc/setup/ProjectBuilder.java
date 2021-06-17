@@ -38,17 +38,17 @@ public class ProjectBuilder {
 
         StringBuilder buildString = new StringBuilder(Core.files.internal("templates/base/build.gradle").readString()
             .replace("%APPNAME%", appName)
-            .replace("//%CLASSPATH_PLUGINS%", modules.map(type -> type.classpathPlugin).reduce("", (name, str) -> name == null ? str : str + "\n\tclasspath '" + name + "'")/*.substring(2)*/));
+            .replace("//%CLASSPATH_PLUGINS%", modules.map(type -> type.classpathPlugin).reduce("", (name, str) -> name == null ? str : str + "\t\tclasspath '" + name + "'\n")));
 
         for (ProjectType ptype : modules) {
             buildString.append("\n").append(ptemplate
                 .replace("%NAME%", ptype.name())
-                .replace("%PLUGINS%", Seq.with(ptype.plugins).reduce("", (plugin, str) -> str + "\n\tapply plugin: \"" + plugin + "\"").substring(2)
-                        + (ptype == ProjectType.android ? "\n\n\tconfigurations{ natives }" : ""))
+                .replace("%PLUGINS%", Seq.with(ptype.plugins).reduce("", (plugin, str) -> str + "\tapply plugin: \"" + plugin + "\"\n")
+                        + (ptype == ProjectType.android ? "\n\n\tconfigurations { natives }\n" : ""))
                 .replace("%DEPENDENCIES%", (ptype == ProjectType.core ? "" : "implementation project(\":core\")\n\t\t")  +
                     dependencies.reduce("", (dependency, str) -> (!dependency.dependencies.containsKey(ptype) ? str :
                     Seq.with(dependency.dependencies.get(ptype)).reduce("", (dep, bstr) -> bstr + "\n\t\t" +
-                    ((ptype == ProjectType.android && dep.contains("native")) ? "natives \"" + dep + "\"" :
+                    ((ptype == ProjectType.android && dep.contains("native")) ? "natives arcModule(\"" + dep.replace("arc ", "") + "\")" :
                     dep.contains("arc ") ? "implementation arcModule(\"" + dep.replace("arc ", "") + "\")" : "implementation \"" + dep + "\"")))).substring(3)));
         }
 
@@ -69,7 +69,7 @@ public class ProjectBuilder {
         // core project
         project.files.add(new ProjectFile(template, "core/build.gradle"));
 
-        Fi src = Core.files.internal("templates/" + this.template + "/files");
+        Fi src = Core.files.internal("templates/" + this.template + "/files.txt");
         String[] files = src.readString().replace(System.lineSeparator(), "").split(",");
 
         project.files.add(new ProjectFile(this.template, "MainClass", "core/src/" + packageDir + "/" + mainClass + ".java", true));
@@ -80,15 +80,10 @@ public class ProjectBuilder {
             }
         }
 
-        // if(modules.contains(ProjectType.html)){
-        //     project.files.add(new ProjectFile(template, "core/CoreGdxDefinition", "core/src/" + mainClass + ".gwt.xml", true));
-        // }
-
         String[] fileDirs = {"assets", "assets-raw"};
 
         for (String dir : fileDirs) {
-            dir = "templates/base/core/" + dir + "/files";
-            Fi file = Core.files.internal(dir);
+            Fi file = Core.files.internal("templates/base/core/" + dir + "/files.txt");
             String[] lines = file.readString().split(System.lineSeparator());
 
             for (String respath : lines) {
@@ -123,18 +118,6 @@ public class ProjectBuilder {
             project.files.add(new ProjectFile(template, "local.properties", true));
         }
 
-        // // html project
-        // if(modules.contains(ProjectType.html)){
-        //     project.files.add(new ProjectFile(template, "html/build.gradle"));
-        //     project.files.add(new ProjectFile(template, "html/src/HtmlLauncher", "html/src/" + packageDir + "/client/HtmlLauncher.java", true));
-        //     project.files.add(new ProjectFile(template, "html/GdxDefinition", "html/src/" + packageDir + "/GdxDefinition.gwt.xml", true));
-        //     project.files.add(new ProjectFile(template, "html/war/index", "html/webapp/index.html", true));
-        //     project.files.add(new ProjectFile(template, "html/war/styles.css", "html/webapp/styles.css", false));
-        //     project.files.add(new ProjectFile(template, "html/war/soundmanager2-jsmin.js", "html/webapp/soundmanager2-jsmin.js", false));
-        //     project.files.add(new ProjectFile(template, "html/war/soundmanager2-setup.js", "html/webapp/soundmanager2-setup.js", false));
-        //     project.files.add(new ProjectFile(template, "html/war/WEB-INF/web.xml", "html/webapp/WEB-INF/web.xml", true));
-        // }
-
         // ios robovm
         if (modules.contains(ProjectType.ios)) {
             project.files.add(new ProjectFile(template, "ios/src/IOSLauncher", "ios/src/" + packageDir + "/IOSLauncher.java", true));
@@ -166,8 +149,6 @@ public class ProjectBuilder {
         values.put("%ASSET_PATH%", assetPath);
         values.put("%BUILD_TOOLS_VERSION%", Dependencies.buildToolsVersion);
         values.put("%API_LEVEL%", Dependencies.androidAPILevel);
-        values.put("%GWT_VERSION%", Dependencies.gwtVersion);
-        values.put("%GWT_INHERITS%", parseGwtInherits());
 
         copyAndReplace(outputDir, project, values);
 
@@ -219,16 +200,6 @@ public class ProjectBuilder {
             txt = txt.replace(key, value);
         }
         return txt;
-    }
-
-    private String parseGwtInherits() {
-        String parsed = "";
-
-        for (ProjectDependency dep : dependencies) {
-            //TODO add gwt inherits: "\t<inherits name='" + inherit + "' />\n";
-        }
-
-        return parsed;
     }
 
     private boolean isSdkLocationValid(String sdkLocation) {
